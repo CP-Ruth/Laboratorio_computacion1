@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class calculadora_RuthCondoriP {
+public class calculadora_RuthCondoriP_parcial {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         boolean calcu= true;
