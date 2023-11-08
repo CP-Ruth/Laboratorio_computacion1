@@ -1,0 +1,174 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+
+// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
+// then press Enter. You can now see whitespace characters in your code.
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Mensaje de inicio.
+        System.out.println("Saludos. \nBienvenido al testeo de ADN.\nVamos a hacer solo una pequeña prueba a tu ADN");
+        System.out.println("¡No te preocupes, no te vamos pinchar, no es necesaria tu sangre! (aún)\nPara continuar ingresa cualquier letra.");
+        String mess = sc.next();
+
+        // Inicio de la prueba.
+        while (true){
+
+            //1 Armamos la cadena de ADN, es una lista de Strings.
+            ArrayList<String> adn = new ArrayList<>();
+
+            // Armammos los strings y luego los incorporamos a la lista "adn"
+            for (int i = 0; i < 6; i++){
+                String adnRow ="";
+
+                // Validación de
+                while (true) {
+                    System.out.println("Ingresa una de estas letra - A,T,C,G - : ");
+                    String letter = sc.next().toUpperCase();
+
+                    //valida que el dato ingresado sea una de las letras "A,T,C,G"
+                    if (itOn(letter)) {
+                        adnRow += letter;
+                    }else {
+                        System.out.println("Letra no valida");
+                    }
+
+                    //Solo si el largo del String "adnrow" es igual a 6 ingresa a la condición, si no continua con el bucle para completar el string hasta que cumpla la condición.
+                    if (adnRow.length() ==  6) {
+                        adn.add(adnRow);
+                        spaceBetwenString(adnRow);
+                        break;
+                    }
+                }
+            }
+
+            //Una vez que se haya completado el bucle for, que quiere decir que se llenó la matriz 6x6. Imprimimos la matriz que completamos y hacemos que pase por la prueba.
+            spaceBetweenMatrix(adn);
+
+            //Es la prueba para identificar si el adn ingresado es el de un mutante.
+            if(isMutant(adn)){
+                System.out.println("¡Es Mutante!");
+            }else {
+                System.out.println("¡NO es Mutante!");
+            }
+
+            //Cuando temrina la prueba tenemos la opción de hacer o iniciar una nueva prueba. Si no se requiere entonces solo indicamos que "no".
+            while (true){
+                System.out.println("¿Deseas analizar otro ADN? (si/no)");
+                mess = sc.next().toUpperCase();
+                if (mess.equals("SI") || mess.equals("NO")){
+                    break;
+                }
+            }
+            if (mess.equals("NO")){
+                break;
+            }
+        }
+
+        System.out.println("Gracias por ayudar a Magneto a buscar Mutantes. Adios.");
+
+    }
+
+
+
+
+
+    // Corroborar que la letra esté en {'A','T','C','G'}
+    public static boolean itOn(String letter){
+        String[] letters = {"A","T","C","G"};
+        for ( String element:letters  ) {
+            if(letter.equals(element)){
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Imprimir los string con espacio intermedio SOLO TOMA LA FILA - FILA
+    public static void spaceBetwenString(String letras){
+        String newString = "";
+        for ( int i = 0; i < letras.length(); i++ ) {
+             newString += " "+ letras.charAt(i);
+        }
+        System.out.println(newString);
+    };
+
+    // Imprime la matriz de stings con espacio intermedio entre las letras
+    public static void spaceBetweenMatrix(ArrayList<String> matrix){
+        System.out.println("-------------------------------------------------------\nTu adn:");
+        for (String element:matrix ) {
+            spaceBetwenString(element);
+        }
+        System.out.println("-------------------------------------------------------");
+    };
+
+
+    // Pasar un ArrayList<String> a una matriz de char
+    public static char[][] ArrayListToMatrix(ArrayList<String> matrix){
+        int row = matrix.size();
+        int column = matrix.get(0).length();
+
+        char[][] lettersMatrix = new char[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                lettersMatrix[i][j] =  matrix.get(i).charAt(j);
+            }
+        }
+        return lettersMatrix;
+    }
+
+    // Corroborar si es mutante
+    public static boolean isMutant(ArrayList<String> matrix){
+        int count = 0;
+        char[][] matrixLetters = ArrayListToMatrix(matrix);
+
+        // Primero recorre cada fila
+        for (int i = 0; i < 6; i++){
+            for (int j = 0; i < 3; i++){
+                if ( matrixLetters[i][j] == matrixLetters[i][j+1] && matrixLetters[i][j]==matrixLetters[i][j+2] && matrixLetters[i][j]==matrixLetters[i][j+3] ){
+                    count +=1;
+                }
+            }
+        }
+
+        // Segundo recorre cada columna
+        for (int j = 0; j < 6; j++){
+            for (int i = 0; i < 3; i++){
+                if ( matrixLetters[i][j] == matrixLetters[i+1][j] && matrixLetters[i][j]==matrixLetters[i+2][j] && matrixLetters[i][j]==matrixLetters[i+3][j] ){
+                    count +=1;
+                }
+            }
+        }
+
+        // Tercero diagonales \\
+        for (int j = 0; j < 3; j++){
+            for (int i = 0; i < 3; i++){
+                if ( matrixLetters[i][j] == matrixLetters[i+1][j+1] && matrixLetters[i][j]==matrixLetters[i+2][j+2] && matrixLetters[i][j]==matrixLetters[i+3][j+3] ){
+                    count +=1;
+                }
+            }
+        }
+
+        // Cuarto diagonales //
+        for (int j = 5; j > 2; j--){
+            for (int i = 0; i < 3; i++){
+                if ( matrixLetters[j][i] == matrixLetters[j-1][i+1] && matrixLetters[j][i]==matrixLetters[j-2][i+2] && matrixLetters[j][i]==matrixLetters[j-3][i+3] ){
+                    count +=1;
+                }
+            }
+        }
+
+        if(count>1){
+            return true;
+        } else {
+            return false;
+        }
+        //return count>1
+    }
+
+}
+
+
+
+
